@@ -1,0 +1,39 @@
+# Maintainer: Peter Johennecken <echo -e "cGV0ZXIuam9oZW5uZWNrZW5AZ21haWwuY29tCg==" | base64 -d>
+# Base on the work from: Luca Stefani <echo -e "bHVjYS5zdGVmYW5pLmdlMUBnbWFpbC5jb20K" | base64 -d>
+
+pkgname=make3
+_pkgname=make
+pkgver=3.81
+pkgrel=1
+conflicts=('make')
+provides=("make=${pkgver}-${pkgrel}")
+pkgdesc="GNU make utility to maintain groups of programs"
+arch=('i686' 'x86_64')
+url="http://www.gnu.org/software/make"
+license=('GPL3')
+depends=('glibc' 'sh')
+install=${_pkgname}.install
+source=(https://ftp.gnu.org/gnu/${_pkgname}/${_pkgname}-${pkgver}.tar.bz2
+        glob_patch.patch)
+
+md5sums=('354853e0b2da90c527e35aabb8d6f1e6'
+         '19a17cbce3c284a5ca6acd53f0ccb0c5')
+build() {
+  cd ${srcdir}/${_pkgname}-${pkgver}
+
+  patch -Np1 -i ${srcdir}/glob_patch.patch
+
+  ./configure --prefix=/usr
+  make
+}
+
+check() {
+  cd ${srcdir}/${_pkgname}-${pkgver}
+  #make check
+  echo "skipped"
+}
+
+package() {
+  cd ${srcdir}/${_pkgname}-${pkgver}
+  make DESTDIR=${pkgdir} install
+}
